@@ -1,0 +1,109 @@
+"""
+build_dataset.py
+
+Creates a small dummy support ticket dataset for the categorizer.
+This is NOT real user data - all tickets below were written by me
+to imitate how billing / technical / hr / general tickets usually
+look, based on common helpdesk ticket patterns.
+
+Run this once to generate data/tickets.csv
+"""
+
+import pandas as pd
+
+tickets = [
+    # ---------------- BILLING ----------------
+    ("Invoice not received", "I made the payment last week but I still have not got my invoice for this month. Please send it soon.", "Billing"),
+    ("Wrong amount charged", "My card was charged 1500 rupees but my plan cost is only 999. Please check and refund the extra amount.", "Billing"),
+    ("Refund delayed", "I cancelled my subscription 10 days back and was told refund will come in 5-7 days but I have not received it yet.", "Billing"),
+    ("Subscription renewed without confirmation", "My yearly plan got renewed automatically and money got deducted. I did not want to renew this time.", "Billing"),
+    ("Payment failed but amount deducted", "I tried to pay for the premium plan, the payment page showed failed but the amount was deducted from my account.", "Billing"),
+    ("Duplicate charge on card", "I see two charges of the same amount on the same day on my card statement for one single order.", "Billing"),
+    ("GST invoice missing", "I need a GST invoice for my last purchase for company reimbursement, can someone share it.", "Billing"),
+    ("Charged for upgrade I did not request", "I see an extra charge for plan upgrade on my bill but I never asked to upgrade my plan.", "Billing"),
+    ("Discount coupon not applied", "I used a discount coupon at checkout but the final bill did not show any discount applied.", "Billing"),
+    ("Credit note not received", "Support said a credit note will be issued for my returned order but it has been 2 weeks and nothing came.", "Billing"),
+    ("Auto debit failed this month", "My auto debit for the monthly subscription failed this time and now my account shows suspended.", "Billing"),
+    ("Refund status update needed", "Can someone update me on the status of my refund request raised on 3rd of this month.", "Billing"),
+    ("Change billing cycle", "I want to change my billing cycle from monthly to yearly, please guide me how to do this.", "Billing"),
+    ("Overcharged for extra users", "My plan is for 5 users but I was billed for 8 users this month, please correct this.", "Billing"),
+    ("Invoice amount mismatch", "The invoice I got by email shows a different total than what was shown on the payment page.", "Billing"),
+    ("Update payment method", "I want to update my saved card details because my old card has expired.", "Billing"),
+    ("Extra charge for addon feature", "There is an extra line item in my bill for an addon feature that I never enabled.", "Billing"),
+    ("Yearly plan invoice needed", "Please share the invoice copy for my yearly plan purchase, I need it for my records.", "Billing"),
+    ("Refund not credited to bank", "Refund shows completed on your dashboard but the amount is not showing in my bank account yet.", "Billing"),
+    ("Wallet balance not updated", "I added money to my wallet but the balance is still showing the old amount after 2 hours.", "Billing"),
+
+    # ---------------- TECHNICAL ----------------
+    ("App crashes on login", "Every time I try to open the app and enter my password it crashes immediately.", "Technical"),
+    ("Page not loading", "The dashboard page keeps loading forever and never opens, tried on 2 different browsers.", "Technical"),
+    ("API returning 500 error", "We are integrating your API and it keeps returning a 500 internal server error since morning.", "Technical"),
+    ("Unable to reset password", "I clicked forgot password multiple times but the reset link email never arrives.", "Technical"),
+    ("Data not syncing", "My data is not syncing between the mobile app and the web app, changes on one side do not show on the other.", "Technical"),
+    ("App very slow after update", "After the latest update the app has become very slow, every screen takes 10 seconds to open.", "Technical"),
+    ("OTP not received for login", "I am trying to log in with OTP but the OTP message is not coming to my phone.", "Technical"),
+    ("Feature broken after update", "The export to excel feature stopped working after the recent app update, it just shows a blank file.", "Technical"),
+    ("Dashboard showing blank screen", "When I open the analytics dashboard it just shows a blank white screen with no error message.", "Technical"),
+    ("Mobile app crashes on startup", "The moment I open the mobile app it closes automatically, this started from yesterday.", "Technical"),
+    ("Not receiving notifications", "I have notifications turned on in settings but I am not getting any push notification on my phone.", "Technical"),
+    ("File upload keeps failing", "I am trying to upload a pdf file but it keeps failing at 90 percent every single time.", "Technical"),
+    ("Two factor authentication not working", "I enabled 2FA and now the app is not accepting the code from my authenticator app.", "Technical"),
+    ("Data not saving", "I filled the entire form and clicked save but my data is not getting saved, I have to enter it again.", "Technical"),
+    ("Search not showing results", "When I search for an order by its ID the search bar shows no results even though the order exists.", "Technical"),
+    ("Third party integration broken", "The Slack integration we set up last month suddenly stopped sending any messages.", "Technical"),
+    ("App logs out automatically", "The app is logging me out on its own every few minutes, very annoying to keep logging in again.", "Technical"),
+    ("404 error on order page", "When I click on view order details I get a 404 page not found error.", "Technical"),
+    ("Website is down", "Your website is completely down right now, getting a connection timeout error.", "Technical"),
+    ("Report generation stuck", "I asked the system to generate a monthly report and it has been stuck at processing for an hour.", "Technical"),
+
+    # ---------------- HR ----------------
+    ("Leave balance query", "Can you tell me how many casual leaves and sick leaves I have remaining for this year.", "HR"),
+    ("Salary not credited", "My salary for this month has not been credited yet, it is usually credited by the 1st.", "HR"),
+    ("PF withdrawal status", "I applied for PF withdrawal 3 weeks ago, can you tell me the current status of my request.", "HR"),
+    ("Offer letter request", "Could HR please share a soft copy of my offer letter, I need it for a visa application.", "HR"),
+    ("Reimbursement pending", "I submitted my travel reimbursement bills last month but the amount has not been reimbursed yet.", "HR"),
+    ("Work from home policy question", "I wanted to know the current work from home policy and how many days per month are allowed.", "HR"),
+    ("Leave approval pending", "I applied for leave for next week but my manager has not approved it yet, can HR follow up.", "HR"),
+    ("Referral bonus not credited", "I referred a candidate 2 months back who joined, but my referral bonus has still not been credited.", "HR"),
+    ("Joining formalities question", "I am joining next Monday, what documents do I need to bring for the joining formalities.", "HR"),
+    ("Relieving letter request", "I resigned last month and my last working day was yesterday, please share my relieving letter.", "HR"),
+    ("ESI card issue", "My ESI card shows wrong details, my date of birth is entered incorrectly, please correct it.", "HR"),
+    ("Tax declaration form", "I want to submit my investment declaration for tax saving, where can I upload the documents.", "HR"),
+    ("Increment letter copy", "Can I get a copy of my increment letter from last appraisal cycle for a loan application.", "HR"),
+    ("Attendance correction request", "My attendance is marked absent on a day I was actually present in office, please correct this.", "HR"),
+    ("Holiday calendar request", "Could you share the holiday calendar for this year, I want to plan my leaves.", "HR"),
+    ("Background verification status", "My background verification was started 2 weeks ago, wanted to check the current status.", "HR"),
+    ("Insurance policy details", "I want to know the details of my health insurance policy provided by the company.", "HR"),
+    ("Maternity leave process", "I wanted to understand the process and documents required to apply for maternity leave.", "HR"),
+    ("Exit interview schedule", "I have resigned and wanted to know when my exit interview is scheduled.", "HR"),
+    ("Salary slip download issue", "I am not able to download my salary slip for last month from the portal, it shows an error.", "HR"),
+
+    # ---------------- GENERAL ----------------
+    ("General product question", "I wanted to know if your product supports multiple languages, can you confirm.", "General"),
+    ("How to use a feature", "Can someone explain how the reporting feature works, I could not find much in the help section.", "General"),
+    ("Pricing plan details", "Could you share the detailed pricing for all your plans along with what is included in each.", "General"),
+    ("Demo request", "We are interested in your product for our team, can we schedule a demo call this week.", "General"),
+    ("Partnership inquiry", "We run a similar business and wanted to explore a partnership opportunity with your company.", "General"),
+    ("Feedback about product", "Just wanted to share some feedback, overall the product is good but the mobile app can be improved.", "General"),
+    ("Feature request", "It would be great if you could add a dark mode option in the app in a future update.", "General"),
+    ("Contact sales team", "I want to talk to your sales team about a custom enterprise plan for my company.", "General"),
+    ("Documentation link request", "Could you share a link to the API documentation, I could not find it on the website.", "General"),
+    ("Training session request", "We just onboarded a new team, is it possible to get a short training session on how to use the tool.", "General"),
+    ("Unsubscribe from emails", "Please remove me from your marketing email list, I keep getting promotional emails daily.", "General"),
+    ("General inquiry about company", "I wanted to know more about your company, when was it founded and where is it based.", "General"),
+    ("Career opportunities", "I am interested in job opportunities at your company, where can I check current openings.", "General"),
+    ("Media inquiry", "I am a journalist writing an article on this industry and wanted a quote from your team.", "General"),
+    ("Product roadmap question", "Is there any public roadmap available so we know what features are planned next.", "General"),
+    ("Comparison with competitor", "How is your product different from other similar tools available in the market.", "General"),
+    ("Free trial extension", "My free trial is ending tomorrow, is it possible to extend it by a few more days.", "General"),
+    ("Account deletion request", "I want to permanently delete my account and all my data from your platform.", "General"),
+    ("Data privacy question", "Can you explain how my personal data is stored and whether it is shared with third parties.", "General"),
+    ("General complaint about service", "I am not very happy with the overall service quality lately, wanted to raise this as feedback.", "General"),
+]
+
+df = pd.DataFrame(tickets, columns=["subject", "body", "category"])
+df.insert(0, "ticket_id", ["TCK-" + str(1000 + i) for i in range(len(df))])
+
+df.to_csv("data/tickets.csv", index=False)
+print("Saved", len(df), "tickets to data/tickets.csv")
+print(df["category"].value_counts())

@@ -1,0 +1,6 @@
+ticket,category,confidence,status,priority
+"I was charged twice for my monthly subscription, please refund one of the charges",Billing,45.0,Needs human review,Normal
+"The app keeps crashing every time I try to upload a photo, please help",Technical,49.1,Needs human review,Urgent
+Can you tell me my remaining leave balance for this quarter,HR,35.7,Needs human review,Normal
+What is the difference between your basic and premium plans,General,29.7,Needs human review,Normal
+"Server is down and none of my api requests are working, this is urgent",Technical,32.4,Needs human review,Urgent
